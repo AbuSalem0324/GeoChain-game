@@ -67,9 +67,11 @@ body {
   height: 100dvh;
   width: 100dvw;
   transition: background var(--transition), color var(--transition);
-  /* Prevent iOS Safari from zooming/scrolling the whole page when the user
-     pinches inside the map. The map SVG handles its own pan/pinch. */
-  touch-action: pan-y;
+  /* Body has overflow:hidden, so there's nothing to scroll. `pan-y` here
+     made the browser claim every touch for vertical scrolling, which
+     turned pinch-zoom touchmoves non-cancelable on mobile. `none` lets
+     the map's own handlers fully own the gesture. */
+  touch-action: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;

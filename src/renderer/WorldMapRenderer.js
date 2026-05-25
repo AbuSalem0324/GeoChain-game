@@ -58,6 +58,11 @@ export class WorldMapRenderer {
     this._tooltip.className = 'map-tooltip';
     this._tooltip.style.display = 'none';
     this._container.style.position = 'relative';
+    // Must be on the container (not just the svg) — otherwise the browser
+    // may commit to page scrolling on the first touchmove, after which our
+    // preventDefault is ignored ("cancelable=false" warning) and pinch
+    // input degrades unpredictably.
+    this._container.style.touchAction = 'none';
     this._container.appendChild(this._tooltip);
   }
 
@@ -634,10 +639,19 @@ export class WorldMapRenderer {
       rafId = null;
       if (!pendingVB) return;
       const { x, y, w, h } = pendingVB;
-      svg.setAttribute('viewBox', `${x.toFixed(3)} ${y.toFixed(3)} ${w.toFixed(3)} ${h.toFixed(3)}`);
       pendingVB = null;
+      // Guard against NaN/Infinity that can sneak in from degenerate pinch
+      // input (two touches at identical coords → newDist=0 → factor=Infinity).
+      // Writing NaN to viewBox makes the whole map disappear until reload.
+      if (!Number.isFinite(x) || !Number.isFinite(y) ||
+          !Number.isFinite(w) || !Number.isFinite(h) ||
+          w <= 0 || h <= 0) return;
+      svg.setAttribute('viewBox', `${x.toFixed(3)} ${y.toFixed(3)} ${w.toFixed(3)} ${h.toFixed(3)}`);
     };
     const queueVB = (x, y, w, h) => {
+      if (!Number.isFinite(x) || !Number.isFinite(y) ||
+          !Number.isFinite(w) || !Number.isFinite(h) ||
+          w <= 0 || h <= 0) return;
       pendingVB = { x, y, w, h };
       if (rafId == null) rafId = requestAnimationFrame(flushVB);
     };
@@ -707,10 +721,17 @@ export class WorldMapRenderer {
       } else if (e.touches.length === 2 && pinch) {
         const [a, b] = e.touches;
         const newDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        // Skip degenerate frames: zero finger distance produces Infinity factor
+        // and NaN viewBox, which makes the map vanish.
+        if (newDist < 1 || pinch.dist < 1) {
+          pinch = { dist: Math.max(newDist, 1), cx: pinch.cx, cy: pinch.cy };
+          return;
+        }
         const cx = (a.clientX + b.clientX) / 2;
         const cy = (a.clientY + b.clientY) / 2;
 
         const rect = svg.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return;
         const vb   = pendingVB ?? svg.viewBox.baseVal;
         const mx = vb.x + ((cx - rect.left) / rect.width)  * vb.width;
         const my = vb.y + ((cy - rect.top)  / rect.height) * vb.height;

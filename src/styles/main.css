@@ -67,6 +67,13 @@ body {
   height: 100dvh;
   width: 100dvw;
   transition: background var(--transition), color var(--transition);
+  /* Prevent iOS Safari from zooming/scrolling the whole page when the user
+     pinches inside the map. The map SVG handles its own pan/pinch. */
+  touch-action: pan-y;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 /* Scanline texture overlay */

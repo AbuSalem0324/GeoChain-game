@@ -309,6 +309,12 @@ export class FlatMapRenderer {
     let pinch = null;
     svg.style.touchAction = 'none';
 
+    // iOS Safari fires gesturestart/change for two-finger pinch; preventDefault
+    // here stops the browser from zooming the whole page.
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach(evt => {
+      svg.addEventListener(evt, e => e.preventDefault());
+    });
+
     svg.addEventListener('touchstart', e => {
       if (e.touches.length === 1) {
         lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };

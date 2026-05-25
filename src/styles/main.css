@@ -1204,6 +1204,7 @@ body::before {
 @media (max-width: 680px) {
   :root { --sidebar-w: 240px; }
   .menu-logo { font-size: 2.8rem; }
+  .bmc-qr { display: none; }
 }
 @media (max-width: 480px) {
   .menu-mode-buttons { flex-direction: column; }

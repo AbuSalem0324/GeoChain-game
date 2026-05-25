@@ -66,6 +66,18 @@ export class MenuScreen {
         <div style="margin-top:12px;font-size:0.55rem;color:var(--muted);font-family:var(--font-mono);text-align:center;">
           CONDITION: <span id="condition-display" style="color:var(--accent)">DEFAULT — ENDLESS</span>
         </div>
+
+        <div id="bmc-slot" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
+          <a href="https://www.buymeacoffee.com/islamsz" target="_blank" rel="noopener noreferrer"
+             style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;
+                    background:#f5b547;color:#000;font-family:Inter,system-ui,sans-serif;font-weight:600;
+                    font-size:0.85rem;text-decoration:none;border:1px solid #000;
+                    box-shadow:0 2px 0 #000;transition:transform 0.1s;">
+            <span style="font-size:1.1rem;">🍫</span>Buy me a chocolate
+          </a>
+          <img src="/qr-code.png" alt="Buy me a chocolate QR code" class="bmc-qr"
+               style="width:80px;height:80px;border-radius:6px;background:#fff;padding:4px;" />
+        </div>
       </div>
     `;
 

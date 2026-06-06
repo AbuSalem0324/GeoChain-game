@@ -633,26 +633,30 @@ export class WorldMapRenderer {
 
     // viewBox writes are expensive (force re-layout of ~200 paths). Coalesce
     // them into one update per animation frame for smooth panning/pinching.
+    // pendingVB matches the SVGRect shape (.x .y .width .height) so it can
+    // be read interchangeably with svg.viewBox.baseVal everywhere below —
+    // mixing shapes here caused `vb.width === undefined` on the 2nd touchmove
+    // of every rAF frame and made pinch-zoom snap back to the previous size.
     let pendingVB = null;
     let rafId = null;
     const flushVB = () => {
       rafId = null;
       if (!pendingVB) return;
-      const { x, y, w, h } = pendingVB;
+      const { x, y, width, height } = pendingVB;
       pendingVB = null;
       // Guard against NaN/Infinity that can sneak in from degenerate pinch
       // input (two touches at identical coords → newDist=0 → factor=Infinity).
       // Writing NaN to viewBox makes the whole map disappear until reload.
       if (!Number.isFinite(x) || !Number.isFinite(y) ||
-          !Number.isFinite(w) || !Number.isFinite(h) ||
-          w <= 0 || h <= 0) return;
-      svg.setAttribute('viewBox', `${x.toFixed(3)} ${y.toFixed(3)} ${w.toFixed(3)} ${h.toFixed(3)}`);
+          !Number.isFinite(width) || !Number.isFinite(height) ||
+          width <= 0 || height <= 0) return;
+      svg.setAttribute('viewBox', `${x.toFixed(3)} ${y.toFixed(3)} ${width.toFixed(3)} ${height.toFixed(3)}`);
     };
-    const queueVB = (x, y, w, h) => {
+    const queueVB = (x, y, width, height) => {
       if (!Number.isFinite(x) || !Number.isFinite(y) ||
-          !Number.isFinite(w) || !Number.isFinite(h) ||
-          w <= 0 || h <= 0) return;
-      pendingVB = { x, y, w, h };
+          !Number.isFinite(width) || !Number.isFinite(height) ||
+          width <= 0 || height <= 0) return;
+      pendingVB = { x, y, width, height };
       if (rafId == null) rafId = requestAnimationFrame(flushVB);
     };
     this._queueVB = queueVB;

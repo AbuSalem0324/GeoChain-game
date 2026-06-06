@@ -268,17 +268,27 @@ export class FlatMapRenderer {
 
     // Coalesce viewBox writes into one update per animation frame so
     // panning/pinching stays smooth even with all 50 state paths visible.
+    // pendingVB matches the SVGRect shape (.x .y .width .height) so it can
+    // be read interchangeably with svg.viewBox.baseVal — mixing shapes here
+    // caused `vb.width === undefined` on the 2nd touchmove of every rAF
+    // frame and made pinch-zoom snap back.
     let pendingVB = null;
     let rafId = null;
     const flushVB = () => {
       rafId = null;
       if (!pendingVB) return;
-      const { x, y, w, h } = pendingVB;
-      svg.setAttribute('viewBox', `${x.toFixed(3)} ${y.toFixed(3)} ${w.toFixed(3)} ${h.toFixed(3)}`);
+      const { x, y, width, height } = pendingVB;
+      if (!Number.isFinite(x) || !Number.isFinite(y) ||
+          !Number.isFinite(width) || !Number.isFinite(height) ||
+          width <= 0 || height <= 0) { pendingVB = null; return; }
+      svg.setAttribute('viewBox', `${x.toFixed(3)} ${y.toFixed(3)} ${width.toFixed(3)} ${height.toFixed(3)}`);
       pendingVB = null;
     };
-    const queueVB = (x, y, w, h) => {
-      pendingVB = { x, y, w, h };
+    const queueVB = (x, y, width, height) => {
+      if (!Number.isFinite(x) || !Number.isFinite(y) ||
+          !Number.isFinite(width) || !Number.isFinite(height) ||
+          width <= 0 || height <= 0) return;
+      pendingVB = { x, y, width, height };
       if (rafId == null) rafId = requestAnimationFrame(flushVB);
     };
 

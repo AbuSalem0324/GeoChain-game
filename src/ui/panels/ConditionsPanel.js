@@ -1,5 +1,6 @@
 import { openPanel, closePanel, getPanel } from './PanelManager.js';
 import { GOAL, MODIFIER, MODE } from '../../engine/GameState.js';
+import { t } from '../../i18n/index.js';
 
 const GOAL_INCOMPAT = new Set([GOAL.CONTINENTAL, GOAL.WORLD_DOMINATION]);
 
@@ -30,27 +31,27 @@ export function showConditionsPanel(currentMode, _unused, onConfirm, currentGoal
   const html = `
     <div class="panel">
       <button class="panel-close" id="close-conditions">✕</button>
-      <div class="panel-title">GAME MODE</div>
+      <div class="panel-title">${t('cond.title')}</div>
 
-      <div class="condition-section-label">GOAL <span class="condition-section-hint">pick one</span></div>
+      <div class="condition-section-label">${t('cond.goal')} <span class="condition-section-hint">${t('cond.goal.hint')}</span></div>
       <div class="condition-list" id="goal-list">
-        ${goalOpt(GOAL.DEFAULT,          '<span class="gc-icon gc-icon-sm">all_inclusive</span>', 'Endless',          'No finish line — play as long as you like.')}
-        ${goalOpt(GOAL.CONTINENTAL,         '<span class="gc-icon gc-icon-sm">public</span>', 'Continental',         "Place every country on the starter's continent.", hideContinentalAndWorld)}
-        ${goalOpt(GOAL.WORLD_DOMINATION,    '<span class="gc-icon gc-icon-sm">travel_explore</span>', 'World Domination',    'Every country on Earth. Bering Strait unlocked.', hideContinentalAndWorld)}
-        ${goalOpt(GOAL.NATIONAL_DOMINATION, '<span class="gc-icon gc-icon-sm">star</span>', 'National Domination', 'Place every US state. Available in US States mode only.', !isStates)}
+        ${goalOpt(GOAL.DEFAULT,             '<span class="gc-icon gc-icon-sm">all_inclusive</span>',  t('cond.endless'),     t('cond.endless.desc'))}
+        ${goalOpt(GOAL.CONTINENTAL,         '<span class="gc-icon gc-icon-sm">public</span>',         t('cond.continental'), t('cond.continental.desc'), hideContinentalAndWorld)}
+        ${goalOpt(GOAL.WORLD_DOMINATION,    '<span class="gc-icon gc-icon-sm">travel_explore</span>',t('cond.worldDom'),     t('cond.worldDom.desc'), hideContinentalAndWorld)}
+        ${goalOpt(GOAL.NATIONAL_DOMINATION, '<span class="gc-icon gc-icon-sm">star</span>',           t('cond.nationalDom'), t('cond.nationalDom.desc'), !isStates)}
       </div>
 
-      <div class="condition-section-label" style="margin-top:16px">MODIFIERS <span class="condition-section-hint">optional — mix and match freely</span></div>
+      <div class="condition-section-label" style="margin-top:16px">${t('cond.modifiers')} <span class="condition-section-hint">${t('cond.modifiers.hint')}</span></div>
       <div class="condition-list" id="mod-list">
-        ${modOpt(MODIFIER.ERROR_LIMIT, '<span class="gc-icon gc-icon-sm">close</span>', 'Error Limit', 'Game over when you hit your mistake cap.',
-          `<div class="condition-sub"><label>Errors allowed:</label><input type="number" id="error-limit-input" min="1" max="20" value="3" /></div>`)}
-        ${modOpt(MODIFIER.TIME_LIMIT,  '<span class="gc-icon gc-icon-sm">schedule</span>', 'Time Limit',  'Race the clock. Score = countries placed.',
-          `<div class="condition-sub"><label>Time:</label><input type="text" id="time-limit-input" value="3:00" placeholder="MM:SS" style="width:70px" /><span style="font-size:11px;color:var(--text-dim)">MM:SS</span></div>`)}
+        ${modOpt(MODIFIER.ERROR_LIMIT, '<span class="gc-icon gc-icon-sm">close</span>', t('cond.errorLimit'), t('cond.errorLimit.desc'),
+          `<div class="condition-sub"><label>${t('cond.errorLimit.field')}</label><input type="number" id="error-limit-input" min="1" max="20" value="3" /></div>`)}
+        ${modOpt(MODIFIER.TIME_LIMIT,  '<span class="gc-icon gc-icon-sm">schedule</span>', t('cond.timeLimit'),  t('cond.timeLimit.desc'),
+          `<div class="condition-sub"><label>${t('cond.timeLimit.field')}</label><input type="text" id="time-limit-input" value="3:00" placeholder="MM:SS" style="width:70px" /><span style="font-size:11px;color:var(--text-dim)">MM:SS</span></div>`)}
       </div>
 
       <div class="panel-actions">
-        <button class="btn btn-primary" id="confirm-condition">CONFIRM</button>
-        <button class="btn btn-ghost" id="close-conditions-2">Cancel</button>
+        <button class="btn btn-primary" id="confirm-condition">${t('cond.confirm')}</button>
+        <button class="btn btn-ghost" id="close-conditions-2">${t('cond.cancel')}</button>
       </div>
     </div>
   `;
@@ -61,7 +62,6 @@ export function showConditionsPanel(currentMode, _unused, onConfirm, currentGoal
   let selectedGoal = initGoal;
   const selectedMods = new Set(initMods);
 
-  // Goal: radio
   const goalOptions = overlay.querySelectorAll('#goal-list .condition-option');
   goalOptions.forEach(opt => {
     opt.addEventListener('click', () => {
@@ -71,7 +71,6 @@ export function showConditionsPanel(currentMode, _unused, onConfirm, currentGoal
     });
   });
 
-  // Modifiers: independent toggles — stop inputs from bubbling to parent toggle
   overlay.querySelectorAll('#mod-list input').forEach(input => {
     input.addEventListener('click', e => e.stopPropagation());
     input.addEventListener('mousedown', e => e.stopPropagation());

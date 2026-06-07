@@ -6,6 +6,12 @@ import { MODE, GOAL, MODIFIER, PHASE } from './engine/GameState.js';
 import { showContinentPicker } from './ui/panels/ContinentPanel.js';
 import { DUAL_CONTINENT, getContinents } from './data/continents.js';
 import { showToast } from './ui/Toast.js';
+import { t, onLanguageChange } from './i18n/index.js';
+import { invalidateAliasCache } from './data/aliases.js';
+
+// When language changes, the alias pool changes too — clear the cache so
+// the resolver picks up the new pool on the next guess.
+onLanguageChange(() => invalidateAliasCache());
 
 // Restore theme early to prevent flash
 const savedTheme = localStorage.getItem('geochain_theme') ?? 'dark';
@@ -70,7 +76,7 @@ async function startGame(config) {
         const nextMode = s.mode === MODE.STATES ? MODE.WORLD : MODE.STATES;
         const goalIncompatStates = [GOAL.CONTINENTAL, GOAL.WORLD_DOMINATION];
         if (nextMode === MODE.STATES && goalIncompatStates.includes(s.goal)) {
-          showToast("That goal isn't compatible with US States — pick another.", 'error', 3500);
+          showToast(t('toast.goalStatesIncompat'), 'error', 3500);
           import('./ui/panels/ConditionsPanel.js').then(({ showConditionsPanel }) => {
             showConditionsPanel(MODE.STATES, null, ({ goal, modifiers, errorLimit, timeLimitSeconds }) => {
               startGame({ mode: MODE.STATES, goal, modifiers, errorLimit, timeLimitSeconds });

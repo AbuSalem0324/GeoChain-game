@@ -1,6 +1,5 @@
 import { createState, MODE, GOAL, MODIFIER, PHASE } from './GameState.js';
-import { resolveCountry, resolveCountryFuzzy, isUnplayable, normalise } from '../data/aliases.js';
-import { MISSPELLINGS } from '../data/misspellings.js';
+import { resolveCountry, resolveCountryFuzzy, isUnplayable } from '../data/aliases.js';
 import { getNeighbours, ALL_WORLD_COUNTRIES } from '../data/adjacency.js';
 import { getStateNeighbours, US_STATES } from '../data/states.js';
 import { getContinent, CONTINENTS } from '../data/continents.js';
@@ -108,28 +107,24 @@ export class GameEngine {
     let name = resolveCountry(input, candidates);
 
     if (!name && s.allowTypos) {
-      const misspelled = MISSPELLINGS[normalise(input)];
-      if (misspelled) name = candidates.find(c => normalise(c) === misspelled) ?? null;
-    }
-    if (!name && s.allowTypos) {
       name = resolveCountryFuzzy(input, candidates);
     }
 
     if (!name) {
-      this.emit('error', { message: `"${input}" isn't recognised — check the spelling.`, type: 'unknown' });
+      this.emit('error', { messageKey: 'toast.unknown', messageParams: { input }, type: 'unknown' });
       return;
     }
 
     if (s.placedSet.has(name)) {
-      this.emit('error', { message: `${name} is already placed.`, type: 'duplicate' });
+      this.emit('error', { messageKey: 'toast.duplicate', messageParams: { name }, type: 'duplicate' });
       return;
     }
 
     // Adjacency check
     if (!this._isReachable(name)) {
       s.wrongGuesses.add(name);
-      const unitLabel = s.mode === MODE.STATES ? 'state' : 'country';
-      this._countError(`${name} is not adjacent to any placed ${unitLabel}.`);
+      const key = s.mode === MODE.STATES ? 'toast.notAdjacentState' : 'toast.notAdjacentCountry';
+      this._countError(key, { name });
       return;
     }
 
@@ -138,7 +133,7 @@ export class GameEngine {
       const river = s.river;
       const riverList = river.countries ?? river.states ?? [];
       if (!riverList.includes(name) && !(river.foreign ?? []).includes(name)) {
-        this._countError(`${name} is not on the ${river.name} river.`);
+        this._countError('toast.notOnRiver', { name, river: river.name });
         return;
       }
       if (riverList.includes(name)) s.riverCountriesPlaced++;
@@ -154,11 +149,11 @@ export class GameEngine {
     this._checkWin();
   }
 
-  _countError(message) {
+  _countError(messageKey, messageParams) {
     const s = this._state;
     s.errors++;
     this._startTimerIfNeeded();
-    this.emit('error', { message, type: 'wrong', errors: s.errors });
+    this.emit('error', { messageKey, messageParams, type: 'wrong', errors: s.errors });
     this.emit('stateChange', s);
 
     if (s.modifiers.has(MODIFIER.ERROR_LIMIT) && s.errors >= s.errorLimit) {

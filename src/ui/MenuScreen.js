@@ -1,5 +1,6 @@
 import { MODE, GOAL, MODIFIER } from '../engine/GameState.js';
 import { showToast } from './Toast.js';
+import { t, onLanguageChange, getLanguage, setLanguage, LANGUAGES } from '../i18n/index.js';
 
 export class MenuScreen {
   constructor(el, engine, onStartGame) {
@@ -13,58 +14,63 @@ export class MenuScreen {
 
     this._render();
     this._observeButtons();
+
+    this._unsubLang = onLanguageChange(() => {
+      this._render();
+      this._observeButtons();
+    });
   }
 
   _render() {
+    const currentLang = getLanguage();
+    const currentFlag = LANGUAGES.find(l => l.code === currentLang)?.flag ?? 'gb';
+    const langOptions = LANGUAGES.map(l => `
+      <option value="${l.code}" ${l.code === currentLang ? 'selected' : ''}>${l.label}</option>
+    `).join('');
+
     this._el.innerHTML = `
       <div class="menu-top-left">
-        <button class="btn btn-sm" id="menu-options"><span class="gc-icon gc-icon-sm">settings</span>Options</button>
+        <button class="btn btn-sm" id="menu-options" title="${t('menu.options')}"><span class="gc-icon gc-icon-sm">settings</span><span class="menu-top-label">${t('menu.options')}</span></button>
+        <div class="menu-lang-picker">
+          <span class="menu-lang-flag" id="menu-lang-flag" style="background-image:url(/flags/${currentFlag}.svg)"></span>
+          <select id="menu-lang" class="menu-lang-select" aria-label="${t('opts.language')}">
+            ${langOptions}
+          </select>
+        </div>
       </div>
 
       <div class="menu-theme-toggle">
         <div class="pill-toggle" id="menu-theme">
-          <button id="theme-dark" class="active"><span class="gc-icon gc-icon-sm">dark_mode</span>Dark</button>
-          <button id="theme-light"><span class="gc-icon gc-icon-sm">light_mode</span>Light</button>
+          <button id="theme-dark" class="active" title="${t('menu.theme.dark')}"><span class="gc-icon gc-icon-sm">dark_mode</span><span class="menu-top-label">${t('menu.theme.dark')}</span></button>
+          <button id="theme-light" title="${t('menu.theme.light')}"><span class="gc-icon gc-icon-sm">light_mode</span><span class="menu-top-label">${t('menu.theme.light')}</span></button>
         </div>
       </div>
 
       <div class="menu-content">
-        <div class="menu-logo">GEOCHAIN</div>
-        <div class="menu-tagline">Name a neighbour. Grow the chain.</div>
+        <div class="menu-logo">${t('app.title')}</div>
+        <div class="menu-tagline">${t('app.tagline')}</div>
 
         <div class="menu-rules">
-          <h3>How to play</h3>
-          <div class="rule-item">
-            <div class="rule-arrow green">→</div>
-            A mystery country appears. Type any of its neighbours.
-          </div>
-          <div class="rule-item">
-            <div class="rule-arrow green">→</div>
-            Each correct answer extends the chain to new countries.
-          </div>
-          <div class="rule-item">
-            <div class="rule-arrow amber">→</div>
-            Countries must border any already-placed country.
-          </div>
-          <div class="rule-item">
-            <div class="rule-arrow red">→</div>
-            Wrong answers count as errors. Watch your limit!
-          </div>
+          <h3>${t('menu.howToPlay')}</h3>
+          <div class="rule-item"><div class="rule-arrow green">→</div>${t('menu.rule.1')}</div>
+          <div class="rule-item"><div class="rule-arrow green">→</div>${t('menu.rule.2')}</div>
+          <div class="rule-item"><div class="rule-arrow amber">→</div>${t('menu.rule.3')}</div>
+          <div class="rule-item"><div class="rule-arrow red">→</div>${t('menu.rule.4')}</div>
         </div>
 
         <div class="menu-buttons">
           <div class="menu-mode-buttons">
-            <button class="btn btn-primary btn-lg" id="start-world"><span class="gc-icon btn-emoji">public</span> World Countries</button>
-            <button class="btn btn-primary btn-lg" id="start-states"><span class="gc-icon btn-emoji">flag</span> US States</button>
+            <button class="btn btn-primary btn-lg" id="start-world"><span class="gc-icon btn-emoji">public</span> ${t('menu.startWorld')}</button>
+            <button class="btn btn-primary btn-lg" id="start-states"><span class="gc-icon btn-emoji">flag</span> ${t('menu.startStates')}</button>
           </div>
           <div class="menu-extra-buttons">
-            <button class="btn btn-lg" id="start-sts"><span class="gc-icon btn-emoji">water</span> Source to Sea</button>
-            <button class="btn btn-lg" id="open-conditions"><span class="gc-icon btn-emoji">emoji_events</span> Winning Conditions</button>
+            <button class="btn btn-lg" id="start-sts"><span class="gc-icon btn-emoji">water</span> ${t('menu.startSts')}</button>
+            <button class="btn btn-lg" id="open-conditions"><span class="gc-icon btn-emoji">emoji_events</span> ${t('menu.winConditions')}</button>
           </div>
         </div>
 
         <div style="margin-top:12px;font-size:0.55rem;color:var(--muted);font-family:var(--font-mono);text-align:center;">
-          CONDITION: <span id="condition-display" style="color:var(--accent)">DEFAULT — ENDLESS</span>
+          ${t('menu.condition')}: <span id="condition-display" style="color:var(--accent)">${t('menu.condition.endless')}</span>
         </div>
 
         <div id="bmc-slot" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
@@ -73,15 +79,16 @@ export class MenuScreen {
                     background:#f5b547;color:#000;font-family:Inter,system-ui,sans-serif;font-weight:600;
                     font-size:0.85rem;text-decoration:none;border:1px solid #000;
                     box-shadow:0 2px 0 #000;transition:transform 0.1s;">
-            <span style="font-size:1.1rem;">🍫</span>Buy me a chocolate
+            <span style="font-size:1.1rem;">🍫</span>${t('menu.bmc')}
           </a>
-          <img src="/qr-code.png" alt="Buy me a chocolate QR code" class="bmc-qr"
+          <img src="/qr-code.png" alt="${t('menu.bmc')}" class="bmc-qr"
                style="width:80px;height:80px;border-radius:6px;background:#fff;padding:4px;" />
         </div>
       </div>
     `;
 
     this._bindEvents();
+    this._updateConditionDisplay();
   }
 
   _bindEvents() {
@@ -91,6 +98,14 @@ export class MenuScreen {
       import('./panels/OptionsPanel.js').then(({ showOptionsPanel }) => {
         showOptionsPanel(this._engine);
       });
+    });
+
+    el.querySelector('#menu-lang').addEventListener('change', (e) => {
+      const newCode = e.target.value;
+      const newFlag = LANGUAGES.find(l => l.code === newCode)?.flag ?? 'gb';
+      const flagEl = el.querySelector('#menu-lang-flag');
+      if (flagEl) flagEl.style.backgroundImage = `url(/flags/${newFlag}.svg)`;
+      setLanguage(newCode);
     });
 
     el.querySelector('#theme-dark').addEventListener('click', () => {
@@ -111,7 +126,7 @@ export class MenuScreen {
     el.querySelector('#start-world').addEventListener('click', () => {
       let goal = this._pendingGoal;
       if (goal === GOAL.NATIONAL_DOMINATION) {
-        showToast("National Domination is only available in US States mode — using Endless instead.", 'info', 3500);
+        showToast(t('toast.nationalDomIncompat'), 'info', 3500);
         goal = GOAL.DEFAULT;
       }
       this._onStartGame({ mode: MODE.WORLD, goal, modifiers: [...this._pendingModifiers], errorLimit: this._pendingErrorLimit, timeLimitSeconds: this._pendingTimeLimit });
@@ -120,7 +135,7 @@ export class MenuScreen {
     el.querySelector('#start-states').addEventListener('click', () => {
       const goalIncompatStates = [GOAL.CONTINENTAL, GOAL.WORLD_DOMINATION];
       if (goalIncompatStates.includes(this._pendingGoal)) {
-        showToast("That goal isn't compatible with US States — pick another.", 'error', 3500);
+        showToast(t('toast.goalStatesIncompat'), 'error', 3500);
         import('./panels/ConditionsPanel.js').then(({ showConditionsPanel }) => {
           showConditionsPanel(MODE.STATES, null, ({ goal, modifiers, errorLimit, timeLimitSeconds }) => {
             this._pendingGoal = goal;
@@ -140,7 +155,7 @@ export class MenuScreen {
       const goalIncompatSts = [GOAL.CONTINENTAL, GOAL.WORLD_DOMINATION, GOAL.NATIONAL_DOMINATION];
       const goal = goalIncompatSts.includes(this._pendingGoal) ? GOAL.DEFAULT : this._pendingGoal;
       if (goalIncompatSts.includes(this._pendingGoal)) {
-        showToast("That goal isn't compatible with Source to Sea — using Endless instead.", 'info', 3500);
+        showToast(t('toast.goalStsIncompat'), 'info', 3500);
       }
       import('./panels/RiverPanel.js').then(({ showRiverRulesPanel, showRiverPanel }) => {
         showRiverRulesPanel(() => {
@@ -181,14 +196,14 @@ export class MenuScreen {
   _updateConditionDisplay() {
     const el = this._el.querySelector('#condition-display');
     if (!el) return;
-    const goalLabels = {
-      [GOAL.DEFAULT]:             'ENDLESS',
-      [GOAL.CONTINENTAL]:         'CONTINENTAL',
-      [GOAL.WORLD_DOMINATION]:    'WORLD DOMINATION',
-      [GOAL.NATIONAL_DOMINATION]: 'NATIONAL DOMINATION',
+    const goalKeys = {
+      [GOAL.DEFAULT]:             'menu.condition.endless',
+      [GOAL.CONTINENTAL]:         'menu.condition.continental',
+      [GOAL.WORLD_DOMINATION]:    'menu.condition.worldDom',
+      [GOAL.NATIONAL_DOMINATION]: 'menu.condition.nationalDom',
     };
-    const parts = [goalLabels[this._pendingGoal] ?? 'ENDLESS'];
-    if (this._pendingModifiers.has(MODIFIER.ERROR_LIMIT)) parts.push(`❌ ${this._pendingErrorLimit} errors`);
+    const parts = [t(goalKeys[this._pendingGoal] ?? 'menu.condition.endless')];
+    if (this._pendingModifiers.has(MODIFIER.ERROR_LIMIT)) parts.push(t('menu.condition.errors', { n: this._pendingErrorLimit }));
     if (this._pendingModifiers.has(MODIFIER.TIME_LIMIT)) {
       const m = Math.floor(this._pendingTimeLimit / 60);
       const s = String(this._pendingTimeLimit % 60).padStart(2, '0');

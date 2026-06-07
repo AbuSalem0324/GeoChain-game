@@ -871,22 +871,72 @@ body::before {
   padding: 80px 20px 40px;
 }
 
+/* Top-bar controls on the menu: Options, language picker, theme toggle.
+   All share the same height, corner radius, and border so they read as a
+   consistent toolbar. Heights / paddings are tuned to match across the
+   three different control types (button / select wrapper / pill toggle). */
 .menu-top-left {
   position: absolute;
   top: 20px;
   left: 20px;
   z-index: 3;
-  max-width: calc(50vw - 24px);
+  max-width: calc(70vw - 24px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #menu-options {
   background: rgba(61,232,160,0.12);
-  border-color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
   color: var(--accent);
   font-size: 0.8rem;
-  padding: 0.4rem 0.8rem;
+  padding: 0 0.8rem;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 #menu-options:hover { background: rgba(61,232,160,0.22); color: var(--accent); }
+
+/* Language picker on the menu top bar */
+.menu-lang-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 0 6px;
+  height: 36px;
+  min-width: 0;
+}
+.menu-lang-flag {
+  flex-shrink: 0;
+  width: 22px;
+  height: 16px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+  background-size: cover;
+  background-position: center;
+}
+.menu-lang-select {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  outline: none;
+  cursor: pointer;
+  padding: 0 2px;
+  height: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.menu-lang-select:focus { color: var(--accent); }
+.menu-lang-select option { background: var(--surface); color: var(--text); padding: 4px 8px; }
 
 .menu-theme-toggle {
   position: absolute;
@@ -1120,6 +1170,36 @@ body::before {
   text-align: center;
 }
 
+.opts-lang-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.opts-lang-flag {
+  flex-shrink: 0;
+  width: 28px;
+  height: 21px;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px var(--border2);
+  background-size: cover;
+  background-position: center;
+}
+.opts-lang-select {
+  flex: 1;
+  padding: 0.55rem 0.7rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+.opts-lang-select:focus { border-color: var(--accent); }
+.opts-lang-select option { background: var(--surface); color: var(--text); padding: 4px 8px; }
+
 .opts-slider {
   flex: 1;
   height: 4px;
@@ -1274,9 +1354,11 @@ body::before {
   .menu-rules h3 { font-size: 0.65rem; margin-bottom: 6px; }
   .menu-rules .rule-item { font-size: 0.7rem; margin: 4px 0; gap: 6px; }
 
-  /* Top chrome on phones: Options button in-flow (takes a row), theme
-     pill absolutely pinned to the right of that same row. Logo can no
-     longer slide under either because it lives below in normal flow. */
+  /* Top chrome on phones: in-flow row holds Options (left) + the
+     language picker (centre, expands) + theme pill (pinned right).
+     All three normalise to the theme pill's shape — 40px tall, 20px
+     outer radius, 2px inner padding wrapping a 36px inner control.
+     Options + theme go icon-only to free space for the language. */
   .menu-top-left {
     position: relative;
     top: auto;
@@ -1285,36 +1367,84 @@ body::before {
     z-index: 3;
     display: flex;
     align-items: center;
+    gap: 8px;
     width: 100%;
-    min-height: 44px;
-    margin-bottom: 8px;
+    min-height: 40px;
+    margin-top: 12px;     /* match left/right 12px viewport gap */
+    margin-bottom: 10px;
+    padding-left: 12px;   /* match theme pill's right: 12px */
+    padding-right: 112px; /* 100 for theme pill width + 12 edge gap */
   }
   .menu-theme-toggle {
     position: absolute;
-    top: 10px;
+    top: 12px;
     right: 12px;
-    max-width: calc(100vw - 24px - 110px); /* leave room for Options */
+    max-width: 96px;
     z-index: 3;
   }
 
+  /* Hide button labels on phones — icons-only for Options + theme. */
+  .menu-top-label { display: none; }
+
+  /* Options cog: pill-shaped wrapper, 40px tall, matches theme pill. */
   #menu-options {
-    padding: 0.4rem 0.75rem;
+    height: 40px;
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+    border-radius: 20px;
     font-size: 0.75rem;
-    min-height: 36px;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    display: inline-flex;
   }
   #menu-options .gc-icon {
-    font-size: 1em;
-    margin-right: 0.3em;
+    font-size: 1.2em;
+    margin-right: 0;
+    vertical-align: middle;
   }
 
+  /* Theme pill — 40px tall pill with 2px inner padding (36px inner). */
+  .menu-theme-toggle .pill-toggle {
+    height: 40px;
+    padding: 2px;
+    align-items: center;
+    border-radius: 20px;
+  }
   .menu-theme-toggle .pill-toggle button {
-    padding: 0.4rem 0.75rem;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 18px;
     font-size: 0.75rem;
-    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .menu-theme-toggle .pill-toggle .gc-icon {
-    font-size: 1em;
-    margin-right: 0.25em;
+    font-size: 1.2em;
+    margin-right: 0;
+    vertical-align: middle;
+  }
+
+  /* Language picker: matches the pill shape too — 40px tall, 20px
+     outer radius, sits in the gap between Options and theme. */
+  .menu-lang-picker {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 8px 0 10px;
+    gap: 8px;
+  }
+  .menu-lang-select {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    text-overflow: ellipsis;
+    font-size: 0.8rem;
   }
 
   /* Menu mode/extra buttons — bigger than before, still fit two-up */

@@ -1,5 +1,5 @@
 
-// Canonical name → display name mapping, plus alias → canonical
+// Canonical name → display name mapping
 export const CANONICAL = {
   'united states': 'United States',
   'united kingdom': 'United Kingdom',
@@ -36,85 +36,12 @@ export const CANONICAL = {
   'saint vincent and the grenadines': 'Saint Vincent and the Grenadines',
 };
 
-// Alias → canonical key (lowercase, no diacritics)
-export const ALIASES = {
-  'holland': 'netherlands',
-  'the netherlands': 'netherlands',
-  'united states of america': 'united states',
-  'usa': 'united states',
-  'us': 'united states',
-  'america': 'united states',
-  'england': 'united kingdom',
-  'great britain': 'united kingdom',
-  'britain': 'united kingdom',
-  'uk': 'united kingdom',
-  'uae': 'united arab emirates',
-  'emirates': 'united arab emirates',
-  "ivory coast": "cote d'ivoire",
-  "cote d ivoire": "cote d'ivoire",
-  'czechia': 'czech republic',
-  'czech': 'czech republic',
-  'burma': 'myanmar',
-  'swaziland': 'eswatini',
-  'east timor': 'timor-leste',
-  'timor': 'timor-leste',
-  'turkiye': 'turkey',
-  'türkiye': 'turkey',
-  'republic of ireland': 'ireland',
-  'eire': 'ireland',
-  'cabo verde': 'cape verde',
-  'persia': 'iran',
-  'hellas': 'greece',
-  'formosa': 'taiwan',
-  'siam': 'thailand',
-  'kampuchea': 'cambodia',
-  'abyssinia': 'ethiopia',
-  'rhodesia': 'zimbabwe',
-  'tanganyika': 'tanzania',
-  'dr congo': 'democratic republic of the congo',
-  'congo kinshasa': 'democratic republic of the congo',
-  'congo dr': 'democratic republic of the congo',
-  'drc': 'democratic republic of the congo',
-  'congo brazzaville': 'republic of the congo',
-  'congo republic': 'republic of the congo',
-  'roc': 'republic of the congo',
-  'congo': 'republic of the congo',
-  'republic of congo': 'republic of the congo',
-  'bosnia': 'bosnia and herzegovina',
-  'north mac': 'north macedonia',
-  'macedonia': 'north macedonia',
-  'trinidad': 'trinidad and tobago',
-  'tobago': 'trinidad and tobago',
-  'the gambia': 'gambia',
-  'saudi': 'saudi arabia',
-  'ksa': 'saudi arabia',
-  'png': 'papua new guinea',
-  'new guinea': 'papua new guinea',
-  'car': 'central african republic',
-  'central africa': 'central african republic',
-  'byelorussia': 'belarus',
-  'belorussia': 'belarus',
-  'surinam': 'suriname',
-  'kyrgyzia': 'kyrgyzstan',
-  'kirghizia': 'kyrgyzstan',
-  'russia': 'russia',
-  'russian federation': 'russia',
-  'south sudan': 'south sudan',
-  'korea': 'south korea',
-  'rok': 'south korea',
-  'dprk': 'north korea',
-  'myanmar': 'myanmar',
-  'laos': 'laos',
-  "lao": "laos",
-  'palestine': 'palestine',
-  'west bank': 'palestine',
-  'gaza': 'palestine',
-  'syria': 'syria',
-  'slovak republic': 'slovakia',
-  'moldova': 'moldova',
-  'republic of moldova': 'moldova',
+import { UNIVERSAL_ALIASES, LANG_ALIASES } from './aliasesByLang.js';
+import { getLanguage } from '../i18n/index.js';
 
-  // District of Columbia
+// US state shorthand and DC-specific aliases (kept here since they're
+// US-States-mode only, not affected by the country i18n system).
+const STATES_ALIASES = {
   'dc':                       'district of columbia',
   'd.c.':                     'district of columbia',
   'd c':                      'district of columbia',
@@ -126,60 +53,53 @@ export const ALIASES = {
   'washington, d.c.':         'district of columbia',
   'washington, d c':          'district of columbia',
   'district of columbia':     'district of columbia',
-  // Vatican City
-  'vatican': 'vatican city',
-  'the vatican': 'vatican city',
-  'holy see': 'vatican city',
-  'vatikan': 'vatican city',
-  // San Marino
-  's. marino': 'san marino',
-  'republic of san marino': 'san marino',
-  // Liechtenstein
-  'liecht': 'liechtenstein',
-  'lichtenstein': 'liechtenstein',
-  'fürstentum liechtenstein': 'liechtenstein',
-  // Monaco
-  'principality of monaco': 'monaco',
-  // Andorra
-  'andorre': 'andorra',
-  'principality of andorra': 'andorra',
-  // Malta
-  'republic of malta': 'malta',
-  // Bahrain
-  'kingdom of bahrain': 'bahrain',
-  // Qatar
-  'state of qatar': 'qatar',
-  // Kuwait
-  'state of kuwait': 'kuwait',
-  // Maldives
-  'republic of maldives': 'maldives',
-  // Singapore
-  'republic of singapore': 'singapore',
-  // Caribbean island short forms
-  'the bahamas': 'bahamas',
-  'antigua': 'antigua and barbuda',
-  'barbuda': 'antigua and barbuda',
-  'st kitts and nevis': 'saint kitts and nevis',
-  'st. kitts and nevis': 'saint kitts and nevis',
-  'st kitts': 'saint kitts and nevis',
-  'st. kitts': 'saint kitts and nevis',
-  'saint kitts': 'saint kitts and nevis',
-  'kitts and nevis': 'saint kitts and nevis',
-  'nevis': 'saint kitts and nevis',
-  'st lucia': 'saint lucia',
-  'st. lucia': 'saint lucia',
-  'st vincent and the grenadines': 'saint vincent and the grenadines',
-  'st. vincent and the grenadines': 'saint vincent and the grenadines',
-  'st vincent': 'saint vincent and the grenadines',
-  'st. vincent': 'saint vincent and the grenadines',
-  'saint vincent': 'saint vincent and the grenadines',
-  'svg': 'saint vincent and the grenadines',
-  'grenadines': 'saint vincent and the grenadines',
-  // US States shorthand
-  'ny': 'new york',
-  'penn': 'pennsylvania',
-  'jersey': 'new jersey',
+  'ny':                       'new york',
+  'penn':                     'pennsylvania',
+  'jersey':                   'new jersey',
 };
+
+/**
+ * Build a lookup map: normalised alias → canonical English name.
+ * Combines UNIVERSAL_ALIASES (always accepted) with the current
+ * language's LANG_ALIASES. Recomputed whenever the language changes.
+ */
+let _aliasMapCache = null;
+let _aliasMapLang = null;
+
+function buildAliasMap() {
+  const lang = getLanguage();
+  if (_aliasMapCache && _aliasMapLang === lang) return _aliasMapCache;
+
+  const map = Object.create(null);
+
+  // Universal modern aliases (Burma, Holland, DRC, USA, etc.) — always on
+  for (const [canonical, aliases] of Object.entries(UNIVERSAL_ALIASES)) {
+    for (const a of aliases) map[normalise(a)] = canonical;
+  }
+
+  // Per-language aliases for the currently selected language
+  for (const [canonical, byLang] of Object.entries(LANG_ALIASES)) {
+    const forms = byLang[lang] ?? [];
+    for (const a of forms) map[normalise(a)] = canonical;
+  }
+
+  // States shorthand — language-agnostic
+  for (const [a, target] of Object.entries(STATES_ALIASES)) {
+    // STATES_ALIASES values are lowercase canonical keys (legacy); we keep
+    // them as-is and the resolver matches them case-insensitively below.
+    map[normalise(a)] = target;
+  }
+
+  _aliasMapCache = map;
+  _aliasMapLang = lang;
+  return map;
+}
+
+/** Invalidate the cached alias map (called when language changes). */
+export function invalidateAliasCache() {
+  _aliasMapCache = null;
+  _aliasMapLang = null;
+}
 
 // Countries that are recognised but unplayable (genuinely no land borders / too tiny to play)
 export const UNPLAYABLE = new Set([
@@ -192,41 +112,18 @@ export const UNPLAYABLE = new Set([
 
 // Aliases + common misspellings → canonical unplayable name
 export const UNPLAYABLE_ALIASES = {
-  // Gibraltar
-  'gibralter': 'gibraltar',
-  'gibaltar': 'gibraltar',
-  'gibralatar': 'gibraltar',
-  'gibraltor': 'gibraltar',
-  'jibraltar': 'gibraltar',
-  'the rock': 'gibraltar',
-  'rock of gibraltar': 'gibraltar',
-  // Kiribati
-  'kirabati': 'kiribati',
-  'kirabarti': 'kiribati',
-  'kiribatti': 'kiribati',
-  'kirabas': 'kiribati',
-  'kiribas': 'kiribati',
-  'republic of kiribati': 'kiribati',
-  // Nauru
-  'naru': 'nauru',
-  'narau': 'nauru',
-  'nauruu': 'nauru',
-  'naoru': 'nauru',
-  'republic of nauru': 'nauru',
-  // Tuvalu
-  'tuvallu': 'tuvalu',
-  'tuvaluu': 'tuvalu',
-  'tuvelu': 'tuvalu',
-  'tuvaloo': 'tuvalu',
-  'tuvulu': 'tuvalu',
-  // Faroe Islands
-  'faroes': 'faroe islands',
-  'the faroe islands': 'faroe islands',
-  'faroe island': 'faroe islands',
-  'faeroe islands': 'faroe islands',
-  'faroese islands': 'faroe islands',
-  'føroyar': 'faroe islands',
-  'faroyar': 'faroe islands',
+  'gibralter': 'gibraltar', 'gibaltar': 'gibraltar', 'gibralatar': 'gibraltar',
+  'gibraltor': 'gibraltar', 'jibraltar': 'gibraltar',
+  'the rock': 'gibraltar', 'rock of gibraltar': 'gibraltar',
+  'kirabati': 'kiribati', 'kirabarti': 'kiribati', 'kiribatti': 'kiribati',
+  'kirabas': 'kiribati', 'kiribas': 'kiribati', 'republic of kiribati': 'kiribati',
+  'naru': 'nauru', 'narau': 'nauru', 'nauruu': 'nauru',
+  'naoru': 'nauru', 'republic of nauru': 'nauru',
+  'tuvallu': 'tuvalu', 'tuvaluu': 'tuvalu', 'tuvelu': 'tuvalu',
+  'tuvaloo': 'tuvalu', 'tuvulu': 'tuvalu',
+  'faroes': 'faroe islands', 'the faroe islands': 'faroe islands', 'faroe island': 'faroe islands',
+  'faeroe islands': 'faroe islands', 'faroese islands': 'faroe islands',
+  'føroyar': 'faroe islands', 'faroyar': 'faroe islands',
 };
 
 /** Normalise input: strip diacritics, lowercase, trim */
@@ -242,22 +139,35 @@ export function normalise(str) {
 /** Resolve a player input to a canonical display name, or null */
 export function resolveCountry(input, validNames) {
   const norm = normalise(input);
-  // Direct match against valid names
+
+  // 1. Direct match against valid (canonical) names — always accepted
   for (const name of validNames) {
     if (normalise(name) === norm) return name;
   }
-  // Check alias map
-  const aliasTarget = ALIASES[norm];
+
+  // 2. Alias lookup — universal + current language
+  const aliasMap = buildAliasMap();
+  const aliasTarget = aliasMap[norm];
   if (aliasTarget) {
+    const tNorm = normalise(aliasTarget);
     for (const name of validNames) {
-      if (normalise(name) === aliasTarget) return name;
+      if (normalise(name) === tNorm) return name;
     }
   }
-  // Hyphen-insensitive fallback: treat hyphens and spaces as equivalent.
-  // Lets "timor leste" match "Timor-Leste", "guinea bissau" match "Guinea-Bissau", etc.
+
+  // 3. Hyphen-insensitive fallback for both canonical and aliases
   const normNoHyphen = norm.replace(/-/g, ' ');
   for (const name of validNames) {
     if (normalise(name).replace(/-/g, ' ') === normNoHyphen) return name;
+  }
+  // Also try alias keys with hyphens normalised
+  for (const [k, target] of Object.entries(aliasMap)) {
+    if (k.replace(/-/g, ' ') === normNoHyphen) {
+      const tNorm = normalise(target);
+      for (const name of validNames) {
+        if (normalise(name) === tNorm) return name;
+      }
+    }
   }
   return null;
 }
@@ -288,13 +198,20 @@ function levenshtein(a, b) {
 /**
  * Fuzzy-resolve input to a valid name using Levenshtein distance.
  * Threshold: ≤1 edit for words ≤6 chars, ≤2 edits for longer words.
- * Returns the best match or null.
+ * Matches against canonical names AND the current-language alias pool,
+ * so "Allemange" → Germany works in French.
  */
 export function resolveCountryFuzzy(input, validNames) {
   const norm = normalise(input);
-  if (norm.length < 3) return null; // too short to fuzzy-match safely
+  if (norm.length < 3) return null;
   const threshold = norm.length <= 6 ? 1 : 2;
+
   let best = null, bestDist = Infinity;
+  const validSet = new Set(validNames.map(n => normalise(n)));
+  const canonicalToValid = new Map();
+  for (const name of validNames) canonicalToValid.set(normalise(name), name);
+
+  // 1. Fuzzy against canonical names
   for (const name of validNames) {
     const dist = levenshtein(norm, normalise(name));
     if (dist <= threshold && dist < bestDist) {
@@ -302,5 +219,20 @@ export function resolveCountryFuzzy(input, validNames) {
       bestDist = dist;
     }
   }
+
+  // 2. Fuzzy against alias forms — universal + current language
+  const aliasMap = buildAliasMap();
+  for (const [alias, target] of Object.entries(aliasMap)) {
+    const dist = levenshtein(norm, alias);
+    if (dist <= threshold && dist < bestDist) {
+      // Map alias back to a valid (canonical) name in validNames
+      const tNorm = normalise(target);
+      if (validSet.has(tNorm)) {
+        best = canonicalToValid.get(tNorm);
+        bestDist = dist;
+      }
+    }
+  }
+
   return best;
 }

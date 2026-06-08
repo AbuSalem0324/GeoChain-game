@@ -1,6 +1,6 @@
 import { openPanel, closePanel, getPanel } from './PanelManager.js';
 import { getAllRivers } from '../../data/rivers.js';
-import { t } from '../../i18n/index.js';
+import { t, riverName } from '../../i18n/index.js';
 
 export function showRiverPanel(mode, onSelect) {
   const rivers = getAllRivers(mode);
@@ -9,7 +9,7 @@ export function showRiverPanel(mode, onSelect) {
     const hasForeign = r.foreign?.length;
     return `
       <button class="river-btn" data-river="${r.id}">
-        <span><span class="gc-icon gc-icon-sm">water</span>${r.name.toUpperCase()}</span>
+        <span><span class="gc-icon gc-icon-sm">water</span>${riverName(r).toUpperCase()}</span>
         ${hasForeign ? `<span class="river-warning"><span class="gc-icon gc-icon-sm">warning</span>${t('river.warning.foreign')}</span>` : ''}
       </button>
     `;

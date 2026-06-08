@@ -1343,7 +1343,13 @@ body::before {
   }
   .menu-content {
     padding: 8px 14px 24px;
-    justify-content: flex-start;
+    /* Fill the space left under the in-flow top-chrome row (~62px tall) and
+       centre the body so spare room is split evenly top/bottom instead of
+       dumped as a gap below the BMC button. min-height (not height) keeps it
+       scrollable when the content is taller than the viewport. */
+    flex: 1 0 auto;
+    min-height: calc(100dvh - 62px);
+    justify-content: center;
     max-height: none;
     overflow-y: visible;
     width: 100%;

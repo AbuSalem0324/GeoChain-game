@@ -6,6 +6,7 @@ export const MODE = {
   WORLD: 'world',
   STATES: 'states',
   SOURCE_TO_SEA: 'sts',
+  FLAGS: 'flags',
 };
 
 // Goal = the win condition (pick one).

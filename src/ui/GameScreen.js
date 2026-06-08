@@ -7,7 +7,7 @@ function _fmtTime(secs) {
 }
 import { Autocomplete } from './Autocomplete.js';
 import { showToast } from './Toast.js';
-import { t, onLanguageChange } from '../i18n/index.js';
+import { t, onLanguageChange, riverName } from '../i18n/index.js';
 import { showGameOverPanel, showWinPanel } from './panels/ResultPanel.js';
 import { showContinentPicker } from './panels/ContinentPanel.js';
 import { DUAL_CONTINENT, getContinent } from '../data/continents.js';
@@ -263,7 +263,7 @@ export class GameScreen {
     const riverControls = el.querySelector('#river-controls');
     if (s.river) {
       riverControls.style.display = '';
-      el.querySelector('#river-name-label').innerHTML = `<span class="gc-icon gc-icon-sm">water</span>${s.river.name.toUpperCase()}`;
+      el.querySelector('#river-name-label').innerHTML = `<span class="gc-icon gc-icon-sm">water</span>${riverName(s.river).toUpperCase()}`;
       el.querySelector('#river-line-toggle').innerHTML = `<span class="gc-icon gc-icon-sm">water</span>${s.showRiverLine ? t('map.btn.hideRiver') : t('map.btn.showRiver')}`;
       this._renderer?.setRiverLinesVisible?.(s.showRiverLine);
     } else {
@@ -310,7 +310,7 @@ export class GameScreen {
       const riverUnit = s.river.states ? 'states' : 'countries';
       chips.push({
         id: 'river', icon: 'water',
-        label: t('chip.river.label', { river: s.river.name }),
+        label: t('chip.river.label', { river: riverName(s.river) }),
         value: t(riverUnit === 'states' ? 'chip.river.value.states' : 'chip.river.value.countries', { n: s.riverCountriesPlaced, total }),
       });
     } else if (s.goal === GOAL.CONTINENTAL) {

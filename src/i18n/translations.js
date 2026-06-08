@@ -290,6 +290,10 @@ export const translations = {
     'result.btn.menu': 'Menú', 'result.youWin': '¡GANASTE!',
     'result.worldDominated': '¡MUNDO DOMINADO!', 'result.nationDominated': '¡NACIÓN DOMINADA!',
     'result.continentDominated': '¡{continent} DOMINADO!', 'result.riverComplete': '¡{river} COMPLETO!',
+    // River names — only those with a distinct Spanish form (others fall back to the English name).
+    'river.nile': 'Nilo', 'river.congo': 'Congo', 'river.amazon': 'Amazonas',
+    'river.danube': 'Danubio', 'river.rhine': 'Rin', 'river.dnieper': 'Dniéper',
+    'river.euphrates': 'Éufrates', 'river.indus': 'Indo', 'river.zambezi': 'Zambeze',
   },
 
   'it': {
@@ -369,6 +373,10 @@ export const translations = {
     'result.btn.menu': 'Menu', 'result.youWin': 'HAI VINTO!',
     'result.worldDominated': 'MONDO DOMINATO!', 'result.nationDominated': 'NAZIONE DOMINATA!',
     'result.continentDominated': '{continent} DOMINATO!', 'result.riverComplete': '{river} COMPLETATO!',
+    // River names — only those with a distinct Italian form (others fall back to the English name).
+    'river.nile': 'Nilo', 'river.congo': 'Congo', 'river.amazon': 'Rio delle Amazzoni',
+    'river.danube': 'Danubio', 'river.rhine': 'Reno', 'river.dnieper': 'Dnepr',
+    'river.euphrates': 'Eufrate', 'river.indus': 'Indo', 'river.zambezi': 'Zambesi',
   },
 
   'fr': {
@@ -449,6 +457,10 @@ export const translations = {
     'result.btn.menu': 'Menu', 'result.youWin': 'GAGNÉ !',
     'result.worldDominated': 'MONDE DOMINÉ !', 'result.nationDominated': 'NATION DOMINÉE !',
     'result.continentDominated': '{continent} DOMINÉ !', 'result.riverComplete': '{river} TERMINÉ !',
+    // River names — only those with a distinct French form (others fall back to the English name).
+    'river.nile': 'Nil', 'river.amazon': 'Amazone', 'river.gambia': 'Gambie',
+    'river.danube': 'Danube', 'river.rhine': 'Rhin', 'river.dnieper': 'Dniepr',
+    'river.euphrates': 'Euphrate', 'river.zambezi': 'Zambèze',
   },
 
   'de': {
@@ -529,6 +541,10 @@ export const translations = {
     'result.btn.menu': 'Menü', 'result.youWin': 'GEWONNEN!',
     'result.worldDominated': 'WELT BEHERRSCHT!', 'result.nationDominated': 'NATION BEHERRSCHT!',
     'result.continentDominated': '{continent} BEHERRSCHT!', 'result.riverComplete': '{river} GESCHAFFT!',
+    // River names — only those with a distinct German form (others fall back to the English name).
+    'river.nile': 'Nil', 'river.congo': 'Kongo', 'river.amazon': 'Amazonas',
+    'river.danube': 'Donau', 'river.rhine': 'Rhein', 'river.dnieper': 'Dnepr',
+    'river.euphrates': 'Euphrat', 'river.zambezi': 'Sambesi',
   },
 
   'pt': {
@@ -609,6 +625,10 @@ export const translations = {
     'result.btn.menu': 'Menu', 'result.youWin': 'GANHASTE!',
     'result.worldDominated': 'MUNDO DOMINADO!', 'result.nationDominated': 'NAÇÃO DOMINADA!',
     'result.continentDominated': '{continent} DOMINADO!', 'result.riverComplete': '{river} COMPLETO!',
+    // River names — only those with a distinct Portuguese form (others fall back to the English name).
+    'river.nile': 'Nilo', 'river.congo': 'Congo', 'river.amazon': 'Amazonas',
+    'river.danube': 'Danúbio', 'river.rhine': 'Reno', 'river.gambia': 'Gâmbia',
+    'river.euphrates': 'Eufrates', 'river.indus': 'Indo', 'river.zambezi': 'Zambeze',
   },
 
   'hu': {
@@ -689,5 +709,9 @@ export const translations = {
     'result.btn.menu': 'Menü', 'result.youWin': 'NYERTÉL!',
     'result.worldDominated': 'VILÁGURALOM!', 'result.nationDominated': 'NEMZETI URALOM!',
     'result.continentDominated': '{continent} URALMA!', 'result.riverComplete': '{river} TELJESÍTVE!',
+    // River names — only those with a distinct Hungarian form (others fall back to the English name).
+    'river.nile': 'Nílus', 'river.congo': 'Kongó', 'river.amazon': 'Amazonas',
+    'river.danube': 'Duna', 'river.rhine': 'Rajna', 'river.dnieper': 'Dnyeper',
+    'river.euphrates': 'Eufrátesz', 'river.zambezi': 'Zambézi',
   },
 };

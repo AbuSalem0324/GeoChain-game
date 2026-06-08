@@ -46,6 +46,23 @@ export function onLanguageChange(fn) {
   return () => _listeners.delete(fn);
 }
 
+/**
+ * Localised display name for a river.
+ *
+ * Rivers carry an English `name` in their data. A language only overrides it
+ * when the river has a genuinely different native name (e.g. Danube → Duna in
+ * Hungarian). The override key is `river.<id>`. When the current language has
+ * no such key, we fall back to the river's English `name` — NOT to the raw key
+ * string — so rivers without a separate native name (Zambezi, Mekong, …) keep
+ * their English name everywhere.
+ */
+export function riverName(river) {
+  if (!river) return '';
+  const key = `river.${river.id}`;
+  const dict = translations[_current] ?? {};
+  return dict[key] ?? river.name;
+}
+
 /** Translate a UI key. Supports {placeholder} substitution. */
 export function t(key, vars) {
   const dict = translations[_current] ?? {};

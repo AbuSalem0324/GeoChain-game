@@ -1,6 +1,6 @@
 import { openPanel, closePanel, getPanel } from './PanelManager.js';
 import { GOAL, MODE } from '../../engine/GameState.js';
-import { t } from '../../i18n/index.js';
+import { t, riverName } from '../../i18n/index.js';
 
 function formatTime(secs) {
   const m = Math.floor(secs / 60).toString().padStart(2, '0');
@@ -66,7 +66,7 @@ export function showWinPanel(state, record, callbacks) {
   } else if (state.goal === GOAL.CONTINENTAL) {
     title = t('result.continentDominated', { continent: state.targetContinent.toUpperCase() });
   } else if (state.mode === MODE.SOURCE_TO_SEA) {
-    title = `<span class="gc-icon">water</span>${t('result.riverComplete', { river: state.river?.name?.toUpperCase() ?? 'RIVER' })}`;
+    title = `<span class="gc-icon">water</span>${t('result.riverComplete', { river: state.river ? riverName(state.river).toUpperCase() : 'RIVER' })}`;
   } else {
     title = t('result.youWin');
   }

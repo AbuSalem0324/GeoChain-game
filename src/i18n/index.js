@@ -13,6 +13,9 @@ export const LANGUAGES = [
   { code: 'de',    label: 'Deutsch',      flag: 'de' },
   { code: 'pt',    label: 'Português',    flag: 'pt' },
   { code: 'hu',    label: 'Magyar',       flag: 'hu' },
+  { code: 'nl',    label: 'Nederlands',   flag: 'nl' },
+  { code: 'no',    label: 'Norsk',        flag: 'no' },
+  { code: 'pl',    label: 'Polski',       flag: 'pl' },
 ];
 
 const FALLBACK = 'en-GB';

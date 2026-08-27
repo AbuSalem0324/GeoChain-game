@@ -1,0 +1,32 @@
+# GeoChain — https://www.playgeochain.uk/
+# Free online geography game. Allow all crawlers.
+
+User-agent: *
+Allow: /
+Disallow: /topo/
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://www.playgeochain.uk/sitemap.xml

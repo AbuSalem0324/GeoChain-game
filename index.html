@@ -3,7 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>GeoChain</title>
+    <title>GeoChain — Free Online Geography Game</title>
+    <meta name="description" content="Play GeoChain, a free online geography game. A mystery country appears — name a neighbour and grow the chain. World, US states, and rivers. No ads, no login." />
+    <link rel="canonical" href="https://www.playgeochain.uk/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.playgeochain.uk/" />
+    <meta property="og:site_name" content="GeoChain" />
+    <meta property="og:title" content="GeoChain — Free Online Geography Game" />
+    <meta property="og:description" content="Play GeoChain, a free online geography game. A mystery country appears — name a neighbour and grow the chain. World, US states, and rivers. No ads, no login." />
+    <meta property="og:image" content="https://www.playgeochain.uk/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="GeoChain — A game for geography nerds. Free, no ads, no login." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GeoChain — Free Online Geography Game" />
+    <meta name="twitter:description" content="Play GeoChain, a free online geography game. A mystery country appears — name a neighbour and grow the chain. World, US states, and rivers. No ads, no login." />
+    <meta name="twitter:image" content="https://www.playgeochain.uk/og-image.png" />
+    <meta name="twitter:image:alt" content="GeoChain — A game for geography nerds. Free, no ads, no login." />
+    <link rel="image_src" href="https://www.playgeochain.uk/og-image.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,6 +33,28 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/styles/main.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": ["VideoGame", "WebApplication"],
+        "name": "GeoChain",
+        "alternateName": "GeoChain — Free Online Geography Game",
+        "url": "https://www.playgeochain.uk/",
+        "image": "https://www.playgeochain.uk/og-image.png",
+        "description": "Play GeoChain, a free online geography game. A mystery country appears — name a neighbour and grow the chain. World, US states, and rivers. No ads, no login.",
+        "genre": ["Geography", "Educational", "Puzzle"],
+        "keywords": "free game, online game, geography game, free online geography game",
+        "gamePlatform": "Web browser",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "GBP"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="app">
@@ -23,6 +63,11 @@
     </div>
     <div id="toast-container"></div>
     <div id="panel-overlay" class="panel-overlay hidden"></div>
+    <noscript>
+      <h1>GeoChain</h1>
+      <p>A free online geography game. Name a neighbour. Grow the chain. No ads, no login.</p>
+      <p><a href="https://www.playgeochain.uk/">Play GeoChain</a></p>
+    </noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

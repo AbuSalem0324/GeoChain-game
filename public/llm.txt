@@ -1,0 +1,20 @@
+# GeoChain
+
+> GeoChain is a free online geography game at https://www.playgeochain.uk/. A mystery country or US state outline appears with no label. Name a neighbour to grow the chain. No ads, no login.
+
+GeoChain is a free game you play in the browser. It is an online game and a geography game: identify places by their borders, not by typing the hidden name.
+
+Modes:
+- World Countries — chain countries that share a land border (plus a few sea links)
+- US States — same idea for the 50 states and DC
+- Source to Sea — follow a river from source to mouth, country by country
+
+Play in the browser at https://www.playgeochain.uk/. It is free, with no ads and no account.
+
+## Play
+
+- [GeoChain — free online geography game](https://www.playgeochain.uk/): Play the geography chain game in your browser
+
+## Optional
+
+- [Share image](https://www.playgeochain.uk/og-image.png): Open Graph image for GeoChain
